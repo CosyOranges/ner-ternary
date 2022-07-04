@@ -53,18 +53,18 @@
 			}
 */
 
-std::vector<std::string> tokenize(std::string sentence) {
-	/*
-		This function will tokenize the string passed to it...
-		Thinks to consider:
-			punctuation (this will need to be removed because none of the `ingredients`
-						 in the ternary tree will have any full-stops, commas, etc...
-						 appended to them)
+/*
+	This function will tokenize the string passed to it...
+	Things to consider:
+		punctuation (this will need to be removed because none of the `ingredients`
+						in the ternary tree will have any full-stops, commas, etc...
+						appended to them)
 
-        We can make use of the 'algorithm' library
-        This does use (near enough) O(n) memory,
-        but this way we don't lose words with punctuation
-    */
+	We can make use of the 'algorithm' library
+	This does use (near enough) O(n) memory,
+	but this way we don't lose words with punctuation
+*/
+std::vector<std::string> tokenize(std::string sentence) {
     auto it = std::remove_if(sentence.begin(), sentence.end(), [](char const &c) {
         return std::ispunct(c);
     });
