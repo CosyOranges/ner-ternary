@@ -1,0 +1,15 @@
+{
+    "Diseases": {
+        "Cancer": [
+            1
+        ],
+        "Cyclic": [
+            3
+        ],
+        "Galactosialidosis": [
+            2,
+            3,
+            3
+        ]
+    }
+}
