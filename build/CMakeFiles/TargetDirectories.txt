@@ -1,0 +1,3 @@
+/Users/calvindavies/BMLplayground/PersonalProjects/ner-ternary/build/CMakeFiles/nerternary.dir
+/Users/calvindavies/BMLplayground/PersonalProjects/ner-ternary/build/CMakeFiles/edit_cache.dir
+/Users/calvindavies/BMLplayground/PersonalProjects/ner-ternary/build/CMakeFiles/rebuild_cache.dir
