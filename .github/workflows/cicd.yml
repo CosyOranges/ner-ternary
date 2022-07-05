@@ -62,7 +62,7 @@ jobs:
         if: startsWith(matrix.config.name, 'Ubuntu_Latest_GCC')
         run: |
           sudo apt-get update
-          sudo apt-get install ninja-build cmake
+          sudo apt-get install ninja-build cmake nlohmann-json-dev
           ninja --version
           cmake --version
           gcc --version
@@ -74,7 +74,7 @@ jobs:
           gcc --version
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
           sudo apt-get update
-          sudo apt-get install ninja-build cmake gcc-9 g++-9
+          sudo apt-get install ninja-build cmake nlohmann-json-dev gcc-9 g++-9
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 --slave /usr/bin/g++ g++ /usr/bin/g++-9 --slave /usr/bin/gcov gcov /usr/bin/gcov-9
           echo gcc version after
           gcc --version
