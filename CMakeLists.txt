@@ -13,6 +13,9 @@ file(GLOB HELPERS
 # Name of the project
 project(nerternary)
 
+# include directories
+include_directories("/usr/local/Cellar/nlohmann-json/3.10.5/include")
+
 # Add all the source files needed to build the executable
 add_executable(nerternary src/main.cpp ${HELPERS})
 
