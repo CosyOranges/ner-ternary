@@ -30,8 +30,5 @@ add_executable(
 )
 
 target_link_libraries(nerternary libsModule)
-target_link_libraries(nerternary nlohmann_json)
-
-target_link_libraries("/usr/local/Cellar/nlohmann-json/3.10.5/include")
 
 target_include_directories(libsModule PUBLIC .)
