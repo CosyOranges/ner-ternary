@@ -121,7 +121,10 @@ jobs:
             -DCMAKE_INSTALL_PREFIX:PATH=instdir
       - name: Build
         shell: bash
-        run: cmake --build . --config ${{ matrix.config.build_type }}
+        run: |
+          cmake --build . --config ${{ matrix.config.build_type }}
+          ls
+
 
       # - name: Install Strip
       #   shell: bash
