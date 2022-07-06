@@ -5,8 +5,8 @@
 #include <random>
 
 // --------------- local includes --------------- //
-#include "./lib/node.hpp"
-#include "./lib/processData.hpp"
+#include <lib/node.hpp>
+#include <lib/processData.hpp>
 
 void cleanProductData(std::string inputData, std::fstream *outPutFile) {
 	// Create data structures needed
