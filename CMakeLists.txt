@@ -33,7 +33,7 @@ add_executable(
 add_executable(
     test
 
-    test/test.cpp
+    tests/test.cpp
 )
 
 target_link_libraries(nerternary libsModule)
