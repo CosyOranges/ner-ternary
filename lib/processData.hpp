@@ -9,7 +9,7 @@
 #include <sstream>
 #include <map>
 #include <nlohmann/json.hpp>
-#include "node.hpp"
+#include <lib/node.hpp>
 
 void cleanProductData();
 std::vector<std::string> tokenize(std::string sentence);

@@ -135,9 +135,11 @@ jobs:
         run: |
           cmake --build . --config ${{ matrix.config.build_type }}
           ls
-      - name: Test
+      - name: Unit Test Library
         shell: bash
-        run: ./bin/test
+        run: |
+          ./bin/node-test
+          ./bin/process-data-test
 
 
       # - name: Install Strip

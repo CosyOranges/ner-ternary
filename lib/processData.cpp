@@ -1,4 +1,4 @@
-#include "processData.hpp"
+#include <lib/processData.hpp>
 
 /*
 	WORKFLOW:
@@ -65,13 +65,22 @@
 	but this way we don't lose words with punctuation
 */
 std::vector<std::string> tokenize(std::string sentence) {
+	// First convert it entirely to lowercase
+	std::for_each(sentence.begin(), sentence.end(), [](char & c) {
+		c = ::tolower(c);
+	});
+
     auto it = std::remove_if(sentence.begin(), sentence.end(), [](char const &c) {
-        return std::ispunct(c);
+        if (std::ispunct(c) && c != '-') {
+			return true;
+		} else {
+			return false;
+		}
     });
 
     sentence.erase(it, sentence.end());
 
-    //All that's left is to tokenize the string, by using the ' ' char as a delimiter.
+    // All that's left is to tokenize the string, by using the ' ' char as a delimiter.
     std::vector<std::string> tokens;
     std::string temp;
     for (int i=0; i<sentence.length(); i++) {

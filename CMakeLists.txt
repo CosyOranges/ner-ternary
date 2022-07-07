@@ -11,6 +11,7 @@ project( ner-ternary VERSION 1.0.0 DESCRIPTION "ner ternary tree annotater" )
 # include directories
 include_directories( "/usr/local/Cellar/nlohmann-json/3.10.5/include" )
 find_package( Catch2 3 REQUIRED )
+find_package( nlohmann_json 3.10.5 REQUIRED )
 
 # Declare a new library target.
 add_library(
@@ -22,8 +23,6 @@ add_library(
     lib/processData.cpp
 )
 
-add_library( nlohmann_json INTERFACE )
-
 # Add all the source files needed to build the executable
 add_executable(
     nerternary
@@ -31,13 +30,23 @@ add_executable(
     src/main.cpp
 )
 
+# TESTING executables
 add_executable(
-    test
+    node-test
 
-    tests/test_node.cpp
+    tests/node_test.cpp
 )
 
-target_link_libraries( nerternary libsModule )
-target_link_libraries( test PRIVATE libsModule PRIVATE Catch2::Catch2WithMain )
+add_executable(
+    process-data-test
+
+    tests/process_data_test.cpp
+)
+
+# Linking
+target_link_libraries( libsModule PRIVATE nlohmann_json::nlohmann_json )
+target_link_libraries( nerternary PRIVATE libsModule )
+target_link_libraries( node-test PRIVATE libsModule PRIVATE Catch2::Catch2WithMain )
+target_link_libraries( process-data-test PRIVATE libsModule PRIVATE Catch2::Catch2WithMain )
 
 target_include_directories( libsModule PUBLIC . )
