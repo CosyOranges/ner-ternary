@@ -8,12 +8,9 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin )
 # Name of the project
 project( ner-ternary VERSION 1.0.0 DESCRIPTION "ner ternary tree annotater" )
 
-include(FetchContent)
-
 # include directories
 find_package( Catch2 3 REQUIRED )
-FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz)
-FetchContent_MakeAvailable(json)
+find_package( nlohmann_json 3 REQUIRED )
 
 # Declare a new library target.
 add_library(
@@ -47,7 +44,7 @@ add_executable(
 
 # Linking
 target_link_libraries( libsModule PRIVATE nlohmann_json::nlohmann_json )
-target_link_libraries( nerternary PRIVATE libsModule )
+target_link_libraries( nerternary PRIVATE libsModule PRIVATE nlohmann_json::nlohmann_json )
 target_link_libraries( node-test PRIVATE libsModule PRIVATE Catch2::Catch2WithMain )
 target_link_libraries( process-data-test PRIVATE libsModule PRIVATE Catch2::Catch2WithMain )
 
