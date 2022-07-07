@@ -117,6 +117,7 @@ jobs:
           brew install p7zip cmake ninja nlohmann-json catch2
           ninja --version
           cmake --version
+          nlohmann-json --version
 
       - name: Configure
         shell: bash
