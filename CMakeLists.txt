@@ -8,10 +8,12 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin )
 # Name of the project
 project( ner-ternary VERSION 1.0.0 DESCRIPTION "ner ternary tree annotater" )
 
+include(FetchContent)
+
 # include directories
-include_directories( "/usr/local/Cellar/nlohmann-json/3.10.5/include" )
 find_package( Catch2 3 REQUIRED )
-find_package( nlohmann_json 3.10.5 REQUIRED )
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.10.5/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 # Declare a new library target.
 add_library(
