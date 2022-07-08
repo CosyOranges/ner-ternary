@@ -13,7 +13,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    name: matrix-build
+    name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }} # будет запускаться по очереди на всех типах машин
     strategy:
       fail-fast: false
@@ -172,8 +172,8 @@ jobs:
 
   test:
     # The type of runner that the job will run on
-    name: matrix-testing
-    needs: matrix-build
+    name: ${{ matrix.config.name }}
+    needs: build
     runs-on: ${{ matrix.config.os }} # будет запускаться по очереди на всех типах машин
     strategy:
       fail-fast: false
