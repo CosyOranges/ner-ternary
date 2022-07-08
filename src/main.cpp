@@ -33,6 +33,11 @@ void cleanProductData(std::string inputData, std::fstream *outPutFile) {
 				std::string key;
 				std::stringstream temp(values[3]);
 				std::getline(temp, key, ' ');
+
+				// Force the key to be lowercase
+				std::for_each(key.begin(), key.end(), [](char & c) {
+					c = ::tolower(c);
+				});
 				if (!diseaseMap[key]) {
 					diseaseMap[key] = 1;
 				} else {
@@ -95,6 +100,7 @@ int main(int argc, char* argv[]) {
 	std::string line;
 
 	while (!readTreeDataFile.eof()) {
+		std::cout << "here" << std::endl;
 		std::getline(readTreeDataFile, line);
 		if (line.length() > 0)
 			diseases.push_back(line);
