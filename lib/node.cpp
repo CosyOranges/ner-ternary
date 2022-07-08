@@ -61,6 +61,26 @@ Node* insertNode(Node* root, const std::string &s, int ind) {
 	return root;
 }
 
+int maxDepth(Node* root) {
+	if (root == nullptr) {
+		return 0;
+	}
+	else {
+		int leftDepth = maxDepth(root->left);
+		int midDepth = maxDepth(root->mid);
+		int rightDepth = maxDepth(root->right);
+
+		// Use the largest value
+		if (leftDepth >= midDepth && leftDepth >= rightDepth) {
+			return leftDepth + 1;
+		} else if (midDepth >= leftDepth && midDepth >= rightDepth) {
+			return midDepth + 1;
+		} else {
+			return rightDepth + 1;
+		}
+	}
+}
+
 void traverseTST(Node* root, std::string &out) {
 
 	if (root) {

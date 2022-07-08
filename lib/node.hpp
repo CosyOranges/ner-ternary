@@ -5,6 +5,7 @@
  * A ternary tree each node can have at most 3 children nodes
  * these nodes are distingished as left, mid, and right child.
  *
+ *
  * Terms:
  * 1. Directed Edge:
  * 	The link from a parent to a child.
@@ -112,7 +113,52 @@ struct Node {
 	Node(char x);
 };
 
+/*
+	Build a Ternary Tree from a vector of strings.
+
+	---
+	Args:
+	- str: std::vector\<std::string> A reference to the vector of strings.
+*/
 Node* buildTST(std::vector<std::string> &str);
-Node* insertNode(Node* root, const std::string &s, int ind);
+
+/*
+	Insert an individual string into the ternary tree
+
+	---
+	Args:
+	- root: Node* The root node of the tree.
+	- s: std::string The string to be added.
+	- ind: int The index of the string to start at.
+*/
+Node* insertNode(Node* root, const std::string &s, int ind=0);
+
+/*
+	Find the maximum depth of the ternary tree. This is the longest path from the root to a
+	leaf node.
+
+	---
+	Args:
+	- root: Node* The root node of the tree.
+*/
+int maxDepth(Node* root);
+
+/*
+	Helper function to traverse the Ternary Tree and print it to std::out in pre-order.
+
+	---
+	Args:
+	- root: Node* The root node of the tree.
+	- out: std::string An empty string to be used for printing.
+*/
 void traverseTST(Node* root, std::string &out);
+
+/*
+	Find if a string exists within the Ternary Tree.
+
+	---
+	Args:
+	- root: Node* The root node of the tree.
+	- s: std::string The string to be searched for.
+*/
 bool searchTST(Node* root, const std::string &s);

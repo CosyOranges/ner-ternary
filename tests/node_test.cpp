@@ -38,3 +38,13 @@ TEST_CASE( "Test buildTST function with Vector of strings", "[node]" ) {
         REQUIRE( searchTST(root, "fish") == false );
     }
 }
+
+TEST_CASE( "Test the tree functions", "[node]" ) {
+    std::vector<std::string> treeStrings {"fish", "fishch", "fishion"};
+
+    Node* root = buildTST(treeStrings);
+
+    SECTION ("Testing that words do exist in the tree") {
+        REQUIRE( maxDepth(root) == 8 );
+    }
+}
