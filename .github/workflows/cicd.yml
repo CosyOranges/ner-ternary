@@ -136,13 +136,6 @@ jobs:
           cmake --build . --config ${{ matrix.config.build_type }}
           ls
 
-      - name: Unit Test Library
-        shell: bash
-        run: |
-          ./bin/node-test
-          ./bin/process-data-test
-
-
       # - name: Install Strip
       #   shell: bash
       #   run: cmake --install . --strip
@@ -156,8 +149,8 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v2
         with:
-          path: ./${{ matrix.config.artifact }}
-          name: ${{ matrix.config.artifact }}
+          path: ./bin
+          name: binaries
 
       # - name: Upload release asset
       #   if: github.event_name == 'release' && (github.event.action == 'published' || github.event.action == 'created')
@@ -216,7 +209,7 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: ${{ matrix.config.artifact }}
+          name: binaries
 
       - name: list
         shell: bash
