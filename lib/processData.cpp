@@ -53,17 +53,6 @@
 			}
 */
 
-/*
-	This function will tokenize the string passed to it...
-	Things to consider:
-		punctuation (this will need to be removed because none of the `ingredients`
-						in the ternary tree will have any full-stops, commas, etc...
-						appended to them)
-
-	We can make use of the 'algorithm' library
-	This does use (near enough) O(n) memory,
-	but this way we don't lose words with punctuation
-*/
 std::vector<std::string> tokenize(std::string sentence) {
 	// First convert it entirely to lowercase
 	std::for_each(sentence.begin(), sentence.end(), [](char & c) {
@@ -95,17 +84,8 @@ std::vector<std::string> tokenize(std::string sentence) {
     return tokens;
 }
 
-/*
-	Annotation Data structure:
 
-		VARIABLE1: Original name of file
-
-		VARIABLE2: map<string; vector<int>>
-			- This will hold keys which are the diseases found
-			- The values that the keys point to will be a vector of integers,
-			  the integers will be the lines the disease can be found on
-*/
-void writeAnnotationOut(std::string file_name, std::string file_path, std::string out_path, std::map<std::string, std::vector<int>> annotations) {
+void writeAnnotationOut(std::string file_name, std::string out_path, std::map<std::string, std::vector<int>> annotations) {
 	// initialisations
 	std::fstream outFile;
 	nlohmann::json j;
@@ -135,6 +115,7 @@ void writeAnnotationOut(std::string file_name, std::string file_path, std::strin
 	outFile << j.dump(4) << std::endl;
 	outFile.close();
 }
+
 
 void processFile(std::string file_name, std::string file_path, std::string out_path, Node* root) {
 	/*
@@ -186,5 +167,5 @@ void processFile(std::string file_name, std::string file_path, std::string out_p
         lineCounter++;
 	}
 
-    writeAnnotationOut(file_name, file_path, out_path, annotationMap);
+    writeAnnotationOut(file_name, out_path, annotationMap);
 }

@@ -119,6 +119,9 @@ struct Node {
 	---
 	Args:
 	- str: std::vector\<std::string> A reference to the vector of strings.
+
+	Returns:
+	The root node of the Tree.
 */
 Node* buildTST(std::vector<std::string> &str);
 
@@ -130,6 +133,9 @@ Node* buildTST(std::vector<std::string> &str);
 	- root: Node* The root node of the tree.
 	- s: std::string The string to be added.
 	- ind: int The index of the string to start at.
+
+	Returns:
+	The root node of the Tree.
 */
 Node* insertNode(Node* root, const std::string &s, int ind=0);
 
@@ -140,6 +146,9 @@ Node* insertNode(Node* root, const std::string &s, int ind=0);
 	---
 	Args:
 	- root: Node* The root node of the tree.
+
+	Returns:
+	The maximum depth of the tree as an int.
 */
 int maxDepth(Node* root);
 
@@ -160,6 +169,9 @@ void traverseTST(Node* root, std::string &out);
 	Args:
 	- root: Node* The root node of the tree.
 	- s: std::string The string to be searched for.
+
+	Returns:
+	- A boolean representing whether the string exists in the Tree.
 */
 bool searchTST(Node* root, const std::string &s);
 // bool searchTST(Node* root, const std::string &word, int index=0);

@@ -8,6 +8,7 @@
 #include <lib/node.hpp>
 #include <lib/processData.hpp>
 
+// TODO: This should live in lib/processData, main should only be calling functions, not defining them.
 void cleanProductData(std::string inputData, std::fstream *outPutFile) {
 	// Create data structures needed
 	// 1. fstream for the input txt file
