@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <lib/node.cpp>
+#include <fstream>
 
 TEST_CASE( "Test insertNode function with individual strings.", "[node]" ) {
     Node* root = nullptr;
@@ -48,3 +49,25 @@ TEST_CASE( "Test the tree functions", "[node]" ) {
         REQUIRE( maxDepth(root) == 8 );
     }
 }
+
+// TEST_CASE( "Test against Real Data", "[node]" ) {
+//     std::fstream readTreeDataFile;
+//     readTreeDataFile.open("./tests/out/treeData.txt", std::ios::in);
+//     std::vector<std::string> diseases;
+// 	std::string line;
+
+//     while (!readTreeDataFile.eof()) {
+// 		std::getline(readTreeDataFile, line);
+// 		if (line.length() > 0)
+// 			diseases.push_back(line);
+// 	}
+// 	readTreeDataFile.close();
+
+//     Node* root = buildTST(diseases);
+
+//     SECTION ("Testing that words do exist in the tree") {
+//         REQUIRE( searchTST(root, "al") == false );
+//         REQUIRE( searchTST(root, "gmp") == false );
+//         REQUIRE( searchTST(root, "cancer") == true );
+//     }
+// }

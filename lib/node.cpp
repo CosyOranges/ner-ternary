@@ -153,3 +153,21 @@ bool searchTST(Node* root, const std::string &s) {
 	return prev->endOfString;
 
 }
+
+// bool searchTST(Node* root, const std::string &word, int index) {
+// 	if (root == nullptr) {
+// 		return false;
+// 	}
+
+// 	if (index < word.length()-1) {
+// 		if (word[index] < root->key) {
+// 			return searchTST(root->left, word, index);
+// 		} else if (word[index] > root->key) {
+// 			return searchTST(root->right, word, index);
+// 		} else {
+// 			return searchTST(root->mid, word, index+1);
+// 		}
+// 	} else {
+// 		return root->endOfString;
+// 	}
+// }

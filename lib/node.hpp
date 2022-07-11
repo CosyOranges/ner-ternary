@@ -162,3 +162,4 @@ void traverseTST(Node* root, std::string &out);
 	- s: std::string The string to be searched for.
 */
 bool searchTST(Node* root, const std::string &s);
+// bool searchTST(Node* root, const std::string &word, int index=0);

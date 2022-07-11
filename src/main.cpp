@@ -100,7 +100,6 @@ int main(int argc, char* argv[]) {
 	std::string line;
 
 	while (!readTreeDataFile.eof()) {
-		std::cout << "here" << std::endl;
 		std::getline(readTreeDataFile, line);
 		if (line.length() > 0)
 			diseases.push_back(line);
@@ -125,8 +124,8 @@ int main(int argc, char* argv[]) {
     for (const auto & entry : std::filesystem::directory_iterator(textDataDir)) {
 		std::string file_path = entry.path();
 		std::string file_name = entry.path().filename();
-		processFile(file_name, file_path, outPutDir, root);
 		std::cout << file_path << " | NAME: " << file_name << std::endl;
+		processFile(file_name, file_path, outPutDir, root);
 		count++;
 	}
 
