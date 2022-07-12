@@ -209,3 +209,5 @@ jobs:
         run: |
           chmod +x ./node-test
           chmod +x ./process-data-test
+          ./node-test
+          ./process-data-test
