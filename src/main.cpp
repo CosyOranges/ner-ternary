@@ -7,6 +7,8 @@
 // --------------- local includes --------------- //
 #include <lib/node.hpp>
 #include <lib/processData.hpp>
+#include <src/cli/cli_handler.hpp>
+#include <mpi.h>
 
 // TODO: This should live in lib/processData, main should only be calling functions, not defining them.
 void cleanProductData(std::string inputData, std::fstream *outPutFile) {
@@ -77,6 +79,7 @@ int main(int argc, char* argv[]) {
 	// Initialise variables and fill with input values, this has 0 error handling
 	// and so will break if input is not supplied in the following:
 	// ./ternary -d './path/to/disease.tsv' -i './path/to/input/data' -o './path/to/output'
+	ProcessCommandLine(0, argv);
 	std::string productDataDir = argv[2];
 	std::string textDataDir = argv[4];
 	std::string outPutDir = argv[6];
