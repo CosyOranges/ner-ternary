@@ -53,6 +53,74 @@
 			}
 */
 
+void cleanProductData(std::string inputData, std::fstream *outPutFile, int targetColumn) {
+	// 1. the tsv file that will be read in
+	// 2. map to hold the diseases (avoiding duplicating diseases)
+	std::fstream tsvFile;
+	std::map<std::string, int> diseaseMap;
+	tsvFile.open(inputData, std::ios::in);
+
+	// Read the file
+	if (tsvFile.is_open()) {
+		std::string line;
+		std::vector<std::string> ingredients;
+
+		while (!tsvFile.eof()) {
+			std::vector<std::string> values;
+			std::getline(tsvFile, line);
+			std::stringstream buffer(line);
+			std::string temp;
+
+			// Split the line at tab spaces
+			while (std::getline(buffer, temp, '\t')) {
+				values.push_back(temp);
+			}
+
+			// TODO: Refactor to allow the user to pass down the target column
+			if (values.size() == 7) {
+				std::string key;
+				std::stringstream temp(values[targetColumn]);
+				std::getline(temp, key, ' ');
+
+				// Force the key to be lowercase
+				std::for_each(key.begin(), key.end(), [](char & c) {
+					c = ::tolower(c);
+				});
+
+				// If the word doesn't exist add it, otherwise increase count
+				if (!diseaseMap[key]) {
+					diseaseMap[key] = 1;
+				} else {
+					diseaseMap[key]++;
+				}
+			}
+		}
+
+		// This will create the disease.txt file in alphabetical order, which is ideal for
+		// viewing the diseases...
+		// But will build a ternary tree that is essentially a linked list...
+		// So we can put the keys into a vector and shuffle them
+		// TODO: Consider if this can actually be brought into lines 91-93
+		std::vector<std::string> shuffler;
+
+		for (std::map<std::string, int>::iterator it = diseaseMap.begin(); it != diseaseMap.end(); it++) {
+			shuffler.push_back(it->first);
+		}
+
+		// initialize random number generator
+    	std::random_device rd;
+    	std::mt19937 g(rd());
+		std::shuffle(shuffler.begin(), shuffler.end(), g);
+
+		for (int i=0; i< shuffler.size(); i++) {
+			*outPutFile << shuffler[i] << std::endl;
+		}
+	}
+
+	// Close files
+	tsvFile.close();
+}
+
 std::vector<std::string> tokenize(std::string sentence) {
 	// First convert it entirely to lowercase
 	std::for_each(sentence.begin(), sentence.end(), [](char & c) {

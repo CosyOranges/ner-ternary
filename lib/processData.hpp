@@ -2,19 +2,22 @@
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
-#include <iostream>
 #include <fstream>
-#include <vector>
-#include <string>
-#include <sstream>
+#include <iostream>
 #include <map>
 #include <nlohmann/json.hpp>
+#include <random>
+#include <sstream>
+#include <string>
+#include <vector>
+
+// --------------- local includes --------------- //
 #include <lib/node.hpp>
 
 /*
     TODO: Move this functionality from src/main.cpp to here
 */
-void cleanProductData();
+void cleanProductData(std::string inputData, std::fstream *outPutFile, int targetColumn);
 
 /*
     This will split up a sentence (or more accurately a line read from a file) into "tokenized" strings.
