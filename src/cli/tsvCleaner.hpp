@@ -11,13 +11,13 @@ static bool shuffleFlag;
 struct tsvOpts {
     int targetColumns;
     bool shuffleFlag;
-    std::string tsvFile;
-    std::string outputFile;
+    std::fstream tsvFile;
+    std::fstream outputFile;
 };
 
 tsvOpts cleanTsvCheckCommandOptions(int argc, char* argv[]) {
     char *ptr;
-    tsvOpts *options = new tsvOpts;
+    tsvOpts options;
 
     int i, j;
     j=0;
@@ -29,48 +29,67 @@ tsvOpts cleanTsvCheckCommandOptions(int argc, char* argv[]) {
             switch (*ptr)
             {
             case 'c':
-                options->targetColumns = atoi(argv[++i])-1;
+                options.targetColumns = atoi(argv[++i])-1;
                 break;
 
             case 's':
-                options->shuffleFlag = true;
+                options.shuffleFlag = true;
             default:
                 break;
             }
         } else switch(j++) {
             case 0:
-                options->tsvFile = argv[i];
-                if (!std::filesystem::exists(options->tsvFile)) {
+                if (!std::filesystem::exists(argv[i])) {
                     fprintf(stderr, "Error: Could not open tsv file.");
                     exit(1);
+                } else {
+                    std::string file = argv[i];
+                    options.tsvFile.open(file, std::ios::in);
                 }
                 break;
-            case 1: options->outputFile = argv[i];  break;
+            case 1:
+                if(!std::filesystem::exists(argv[i]))
+                {
+                    fprintf(stderr, "Error: Invalid output path.");
+                    exit(1);
+                } else {
+                    std::string file = argv[i];
+                    int length = file.length();
+                    if (file[length-1] != '/') {
+                        options.outputFile.open(file + "/tree-data.txt", std::ios::out);
+                    } else {
+                        options.outputFile.open(file + "tree-data.txt", std::ios::out);
+                    }
+                }
+                break;
             default:
                 fprintf(stderr, "Error: too many arguments!");
                 exit(1);
         }
     }
 
-    return *options;
+    if (j < 2) {
+        fprintf(stderr, "Too few Arguments supplied. For help: nerternary [command] --help");
+        exit(1);
+    }
+
+    return options;
 }
 
-void cleantsv(std::string inputTsv, std::fstream *outPutFile, int targetColumn, bool shuffle) {
+void cleantsv(std::fstream *tsvFile, std::fstream *outPutFile, int targetColumn, bool shuffle) {
 	// 1. the tsv file that will be read in
 	// 2. map to hold the diseases (avoiding duplicating diseases)
-	std::fstream tsvFile;
 	std::map<std::string, int> diseaseMap;
-	tsvFile.open(inputTsv, std::ios::in);
     std::vector<std::string> shuffler;
 
 	// Read the file
-	if (tsvFile.is_open()) {
+	if (tsvFile->is_open()) {
 		std::string line;
 		std::vector<std::string> ingredients;
 
-		while (!tsvFile.eof()) {
+		while (!tsvFile->eof()) {
 			std::vector<std::string> values;
-			std::getline(tsvFile, line);
+			std::getline(*tsvFile, line);
 			std::stringstream buffer(line);
 			std::string temp;
 
@@ -121,5 +140,5 @@ void cleantsv(std::string inputTsv, std::fstream *outPutFile, int targetColumn, 
 	}
 
 	// Close files
-	tsvFile.close();
+	tsvFile->close();
 }

@@ -17,28 +17,3 @@ root/
     out/
 ```
 
-The tool can then be called with the following command line options:
-```
--d <relative_path_to_tsv_file>
--i <relative_path_to_txt_files>
--o <relative_path_to_desired_output_dir>
-```
-
-### Example call for the above File Structure:
-```bash
-./ner-ternary -d ./key_words.tsv -i ./Documents -o ./out
-```
-
-This would then create the `./out` directory and populate it with:
-```
-root/
-    out/
-        annotations/
-            doc1.json
-            doc2.json
-            doc3.json
-            .
-            .
-            .
-        keywords.txt (The Keywords extracted from the .txt file used to build the ternary tree)
-```

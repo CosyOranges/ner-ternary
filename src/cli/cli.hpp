@@ -58,10 +58,7 @@ static void ProcessCommandLine(int argc, char* argv[]) {
                 options = cleanTsvCheckCommandOptions(argc, argv);
 
                 // Call the cleaner
-                std::fstream writeTreeDataFile;
-	            std::fstream readTreeDataFile;
-	            writeTreeDataFile.open(options.outputFile + "/tree-data.txt", std::ios::out);
-                cleantsv(options.tsvFile, &writeTreeDataFile, options.targetColumns, options.shuffleFlag);
+                cleantsv(&options.tsvFile, &options.outputFile, options.targetColumns, options.shuffleFlag);
             }
 
         } else if (command == "annotate"){
