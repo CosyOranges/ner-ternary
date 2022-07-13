@@ -10,68 +10,6 @@
 #include <src/cli/cli.hpp>
 #include <mpi.h>
 
-// TODO: This should live in lib/processData, main should only be calling functions, not defining them.
-void cleanProductData(std::string inputData, std::fstream *outPutFile) {
-	// Create data structures needed
-	// 1. fstream for the input txt file
-	// 2. fstream for the processed txt file
-	// 3. map to hold the diseases (avoiding duplicating diseases)
-	std::fstream inFile;
-	std::map<std::string, int> diseaseMap;
-	inFile.open(inputData, std::ios::in);
-
-	if (inFile.is_open()) {
-		std::string line;
-		std::vector<std::string> ingredients;
-		while (!inFile.eof()) {
-			std::vector<std::string> values;
-			std::getline(inFile, line);
-			std::stringstream buffer(line);
-			std::string temp;
-			while (std::getline(buffer, temp, '\t')) {
-				values.push_back(temp);
-			}
-
-			if (values.size() == 7) {
-				std::string key;
-				std::stringstream temp(values[3]);
-				std::getline(temp, key, ' ');
-
-				// Force the key to be lowercase
-				std::for_each(key.begin(), key.end(), [](char & c) {
-					c = ::tolower(c);
-				});
-				if (!diseaseMap[key]) {
-					diseaseMap[key] = 1;
-				} else {
-					diseaseMap[key]++;
-				}
-			}
-		}
-
-	// 	// This will create the disease.txt file in alphabetical order, which is ideal for
-	// 	// viewing the diseases...
-	// 	// But will build a ternary tree that is essentially a linked list...
-	// 	// So we can put the keys into a vector and shuffle them
-		std::vector<std::string> shuffler;
-		for (std::map<std::string, int>::iterator it = diseaseMap.begin(); it != diseaseMap.end(); it++) {
-			// std::cout << it->first << " : " << it->second << std::endl;
-			shuffler.push_back(it->first);
-		}
-		// initialize random number generator
-    	std::random_device rd;
-    	std::mt19937 g(rd());
-		std::shuffle(shuffler.begin(), shuffler.end(), g);
-
-		for (int i=0; i< shuffler.size(); i++) {
-			*outPutFile << shuffler[i] << std::endl;
-		}
-	}
-
-	// Close files
-	inFile.close();
-}
-
 /*
 	MAIN
 */
@@ -80,21 +18,24 @@ int main(int argc, char* argv[]) {
 	// and so will break if input is not supplied in the following:
 	// ./ternary -d './path/to/disease.tsv' -i './path/to/input/data' -o './path/to/output'
 	ProcessCommandLine(argc, argv);
-	// std::string productDataDir = argv[2];
-	// std::string textDataDir = argv[4];
-	// std::string outPutDir = argv[6];
+	/*
+	SUCCESSFULLY REFACTORED TO tsvCleaner.hpp
+	std::string productDataDir = argv[2];
+	std::string textDataDir = argv[4];
+	std::string outPutDir = argv[6];
 
-	// std::cout << "-----------------------------------------------------------\n\t\t\tPROGRAM START\n-----------------------------------------------------------\n" << std::endl;
-	// std::cout << "Reading Tree Data from: " << productDataDir << std::endl;
-	// std::cout << "Reading Papers to be tagged from: " << textDataDir << std::endl;
-	// std::cout << "\n-----------------------------------------------------------\n" << std::endl;
-	// std::cout << "Building and Shuffling Tree Data...";
+	std::cout << "-----------------------------------------------------------\n\t\t\tPROGRAM START\n-----------------------------------------------------------\n" << std::endl;
+	std::cout << "Reading Tree Data from: " << productDataDir << std::endl;
+	std::cout << "Reading Papers to be tagged from: " << textDataDir << std::endl;
+	std::cout << "\n-----------------------------------------------------------\n" << std::endl;
+	std::cout << "Building and Shuffling Tree Data...";
 
-	// std::fstream writeTreeDataFile;
-	// std::fstream readTreeDataFile;
-	// writeTreeDataFile.open(outPutDir + "/treeData.txt", std::ios::out);
-	// cleanProductData(productDataDir, &writeTreeDataFile);
-	// writeTreeDataFile.close();
+	std::fstream writeTreeDataFile;
+	std::fstream readTreeDataFile;
+	writeTreeDataFile.open(outPutDir + "/treeData.txt", std::ios::out);
+	cleanProductData(productDataDir, &writeTreeDataFile);
+	writeTreeDataFile.close();
+	*/
 	// readTreeDataFile.open(outPutDir + "/treeData.txt", std::ios::in);
 
 	// std::cout << " Done." << std::endl;
