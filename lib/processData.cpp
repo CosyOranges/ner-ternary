@@ -152,38 +152,24 @@ std::vector<std::string> tokenize(std::string sentence) {
     return tokens;
 }
 
+std::vector<std::vector<int>> tokenizedCharIndexes(std::vector<std::string> tokens) {
+	// This is a 1D array but will be indexed using 2d indexing.
+	int cols, rows;
+	cols = 2;
+	rows = tokens.size();
+	std::vector<std::vector<int>> matrix;
+	matrix.resize(rows, std::vector<int>(cols, 0));
 
-void writeAnnotationOut(std::string file_name, std::string out_path, std::map<std::string, std::vector<int>> annotations) {
-	// initialisations
-	std::fstream outFile;
-	nlohmann::json j;
-	std::string new_file_name, out_put_path;
-
-	out_put_path = out_path + "/annotations/";
-	if (!std::filesystem::is_directory(out_put_path) || !std::filesystem::exists(out_put_path)) { // Check if src folder exists
-    	std::filesystem::create_directory(out_put_path);
-	}
-
-	// add a number that is stored as double (note the implicit conversion of j to an object)
-    // replacing .(...) file extension with .json
-	for (int i=0; i < file_name.length()-1; i++) {
-		if (file_name[i] == '.')
-			break;
-		new_file_name.push_back(file_name[i]);
-	}
-	outFile.open(out_path + "/annotations/" + new_file_name + ".json", std::ios::out);
-
-	for (std::map<std::string, std::vector<int>>::iterator it = annotations.begin(); it != annotations.end(); it++) {
-		std::vector<int> lines;
-		for (int i=0; i<it->second.size(); i++) {
-			lines.push_back(it->second[i]);
+	for (int x=0; x<tokens.size(); x++) {
+		if (x == 0) {
+			matrix[0][1] = tokens[x].length() - 1;
+		} else {
+			matrix[x][0] = matrix[x-1][1] + 2;
+			matrix[x][1] = matrix[x][0] + tokens[x].length() - 1;
 		}
-		j["Diseases"][it->first] = lines;
 	}
-	outFile << j.dump(4) << std::endl;
-	outFile.close();
+	return matrix;
 }
-
 
 void processFile(std::string file_name, std::string file_path, std::string out_path, Node* root) {
 	/*
@@ -209,13 +195,32 @@ void processFile(std::string file_name, std::string file_path, std::string out_p
 	*/
 
 	std::fstream inFile;
-	inFile.open(file_path);
+	std::fstream outFile;
+	std::string new_file_name, out_put_path;
+
+	out_put_path = out_path + "/annotations/";
+	if (!std::filesystem::is_directory(out_put_path) || !std::filesystem::exists(out_put_path)) { // Check if src folder exists
+    	std::filesystem::create_directory(out_put_path);
+	}
+
+	// add a number that is stored as double (note the implicit conversion of j to an object)
+    // replacing .(...) file extension with .json
+	for (int i=0; i < file_name.length()-1; i++) {
+		if (file_name[i] == '.')
+			break;
+		new_file_name.push_back(file_name[i]);
+	}
+	outFile.open(out_path + "/annotations/" + new_file_name + ".json", std::ios::out);
+	inFile.open(file_path, std::ios::in);
 
     // Initialise needed variables
 	int lineCounter = 0;
     std::string line;
     std::vector<std::string> tokenizedLine;
+	std::vector<std::vector<int>> tokensIndexed;
+	std::map<std::string, std::vector<std::vector<int>>> mappedIndexes;
     std::map<std::string, std::vector<int>> annotationMap;
+	nlohmann::json j;
 
 	while (!inFile.eof()) {
         // Read in the file
@@ -223,11 +228,13 @@ void processFile(std::string file_name, std::string file_path, std::string out_p
 
         // Tokenize the line and strip punctuation
         tokenizedLine = tokenize(line);
+		tokensIndexed = tokenizedCharIndexes(tokenizedLine);
 
         // Loop through the tokenized line, search for each string in the TST
         for (int i=0; i<tokenizedLine.size(); i++) {
             if (searchTST(root, tokenizedLine[i])) {
                 annotationMap[tokenizedLine[i]].push_back(lineCounter);
+				j["annotations"]["tokens"][tokenizedLine[i]]["lines"][std::to_string(lineCounter+1)] = {tokensIndexed[i][0], tokensIndexed[i][1]};
             }
         }
 
@@ -235,5 +242,6 @@ void processFile(std::string file_name, std::string file_path, std::string out_p
         lineCounter++;
 	}
 
-    writeAnnotationOut(file_name, out_path, annotationMap);
+	outFile << j.dump(4) << std::endl;
+	outFile.close();
 }

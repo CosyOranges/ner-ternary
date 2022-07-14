@@ -5,9 +5,6 @@
 #include <map>
 #include <random>
 
-static unsigned int targetColumn;
-static bool shuffleFlag;
-
 struct tsvOpts {
     int targetColumns;
     bool shuffleFlag;
@@ -34,13 +31,15 @@ tsvOpts cleanTsvCheckCommandOptions(int argc, char* argv[]) {
 
             case 's':
                 options.shuffleFlag = true;
+                break;
+
             default:
                 break;
             }
         } else switch(j++) {
             case 0:
                 if (!std::filesystem::exists(argv[i])) {
-                    fprintf(stderr, "Error: Could not open tsv file.");
+                    fprintf(stderr, "\nError: Could not open %s.", argv[i]);
                     exit(1);
                 } else {
                     std::string file = argv[i];
@@ -50,7 +49,7 @@ tsvOpts cleanTsvCheckCommandOptions(int argc, char* argv[]) {
             case 1:
                 if(!std::filesystem::exists(argv[i]))
                 {
-                    fprintf(stderr, "Error: Invalid output path.");
+                    fprintf(stderr, "\nError: Output %s does not exist.", argv[i]);
                     exit(1);
                 } else {
                     std::string file = argv[i];
@@ -63,13 +62,13 @@ tsvOpts cleanTsvCheckCommandOptions(int argc, char* argv[]) {
                 }
                 break;
             default:
-                fprintf(stderr, "Error: too many arguments!");
+                fprintf(stderr, "\nError: too many arguments!");
                 exit(1);
         }
     }
 
     if (j < 2) {
-        fprintf(stderr, "Too few Arguments supplied. For help: nerternary [command] --help");
+        fprintf(stderr, "\nToo few Arguments supplied.\n\nFor help: nerternary [command] --help");
         exit(1);
     }
 

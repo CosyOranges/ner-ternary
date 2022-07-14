@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <src/cli/tsvCleaner.hpp>
+#include <src/cli/annotater.hpp>
 
 static void DisplayHelp(std::string command) {
 
@@ -15,9 +16,9 @@ static void DisplayHelp(std::string command) {
     } else if (command == "annotate") {
 
         fputs(
-            "\n\tusage: nerternary annotate [options] <path/to/tree/words.txt> <path/to/input/dir> <path/to/output/dir>\n\n"
-            "\toptions: -p (REQUIRED)       Option to run in parallel (true or false)\n"
-            "\t\t\t -t (ONLY FOR PARALLEL)       Number of threads to use\n"
+            "\n\tusage: nerternary annotate [options] <path/to/tree/tree-data.txt> <path/to/input/dir> <path/to/output/dir>\n\n"
+            "\toptions: -p (OPTIONAL)       Option to run in parallel (true or false)\n"
+            "\t\t -t (ONLY FOR PARALLEL)       Number of threads to use\n"
             "\t\t -d (OPTIONAL)       Supply a list of words to use instead of a .txt file for the ternary tree",
             stderr);
 
@@ -67,11 +68,16 @@ static void ProcessCommandLine(int argc, char* argv[]) {
 
                 DisplayHelp(command);
 
-            } else if (argc < 6) {
+            } else if (argc < 5) {
 
                 std::cout << "\tToo few arguments supplied." << std::endl;
                 DisplayHelp(command);
 
+            } else {
+                annotaterOpts options;
+                options = annotaterCheckCommandOptions(argc, argv);
+
+                annotate(&options.treedata, options.inputTextDir, options.outputJsonDir, options.parallel, options.processors);
             }
 
         } else {
