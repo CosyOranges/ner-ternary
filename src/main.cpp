@@ -8,7 +8,6 @@
 #include <lib/node.hpp>
 #include <lib/processData.hpp>
 #include <src/cli/cli.hpp>
-#include <mpi.h>
 
 /*
 	MAIN

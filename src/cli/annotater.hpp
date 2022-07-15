@@ -89,7 +89,7 @@ annotaterOpts annotaterCheckCommandOptions(int argc, char* argv[]) {
     return options;
 }
 
-void annotate(std::fstream *treedata, std::string inputTextDir, std::string outputJsonDir, bool parallelise, int procRequest) {
+void annotate(std::fstream *treedata, std::string inputTextDir, std::string outputJsonDir) {
     std::vector<std::string> words;
     std::string line;
 
@@ -121,5 +121,7 @@ void annotate(std::fstream *treedata, std::string inputTextDir, std::string outp
 	std::cout.precision(5);
 	std::cout << "\n----------------------------" << std::endl;
 	std::cout << "Processed: " << count << " files." << std::endl;
-	std::cout << "Time Elapsed: " << dbDuration.count() << "s\n" << std::endl;
+	std::cout << "Time Elapsed: " << dbDuration.count() << "s" << std::endl;
+    std::cout << "\n----------------------------" << std::endl;
+    std::cout << "Written to: " << outputJsonDir <<"/annotations/" << std::endl;
 }

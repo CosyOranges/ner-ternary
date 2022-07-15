@@ -15,11 +15,6 @@
 #include <lib/node.hpp>
 
 /*
-    TODO: Move this functionality from src/main.cpp to here
-*/
-void cleanProductData(std::string inputData, std::fstream *outPutFile, int targetColumn);
-
-/*
     This will split up a sentence (or more accurately a line read from a file) into "tokenized" strings.
     This functionality is currently very basic, it will preserve hyphenated words, and force the string to
     be all lowercase in an effort to standardize between the ternary-tree data and the text data.

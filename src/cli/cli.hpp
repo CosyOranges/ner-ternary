@@ -2,6 +2,7 @@
 #include <iostream>
 #include <src/cli/tsvCleaner.hpp>
 #include <src/cli/annotater.hpp>
+#include <src/cli/parallelAnnotater.hpp>
 
 static void DisplayHelp(std::string command) {
 
@@ -77,7 +78,11 @@ static void ProcessCommandLine(int argc, char* argv[]) {
                 annotaterOpts options;
                 options = annotaterCheckCommandOptions(argc, argv);
 
-                annotate(&options.treedata, options.inputTextDir, options.outputJsonDir, options.parallel, options.processors);
+                if (options.parallel) {
+                    parallelAnnotater(&options.treedata, options.inputTextDir, options.outputJsonDir, options.processors);
+                } else {
+                    annotate(&options.treedata, options.inputTextDir, options.outputJsonDir);
+                }
             }
 
         } else {

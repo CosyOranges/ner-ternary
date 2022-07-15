@@ -53,74 +53,6 @@
 			}
 */
 
-void cleanProductData(std::string inputData, std::fstream *outPutFile, int targetColumn) {
-	// 1. the tsv file that will be read in
-	// 2. map to hold the diseases (avoiding duplicating diseases)
-	std::fstream tsvFile;
-	std::map<std::string, int> diseaseMap;
-	tsvFile.open(inputData, std::ios::in);
-
-	// Read the file
-	if (tsvFile.is_open()) {
-		std::string line;
-		std::vector<std::string> ingredients;
-
-		while (!tsvFile.eof()) {
-			std::vector<std::string> values;
-			std::getline(tsvFile, line);
-			std::stringstream buffer(line);
-			std::string temp;
-
-			// Split the line at tab spaces
-			while (std::getline(buffer, temp, '\t')) {
-				values.push_back(temp);
-			}
-
-			// TODO: Refactor to allow the user to pass down the target column
-			if (values.size() == 7) {
-				std::string key;
-				std::stringstream temp(values[targetColumn]);
-				std::getline(temp, key, ' ');
-
-				// Force the key to be lowercase
-				std::for_each(key.begin(), key.end(), [](char & c) {
-					c = ::tolower(c);
-				});
-
-				// If the word doesn't exist add it, otherwise increase count
-				if (!diseaseMap[key]) {
-					diseaseMap[key] = 1;
-				} else {
-					diseaseMap[key]++;
-				}
-			}
-		}
-
-		// This will create the disease.txt file in alphabetical order, which is ideal for
-		// viewing the diseases...
-		// But will build a ternary tree that is essentially a linked list...
-		// So we can put the keys into a vector and shuffle them
-		// TODO: Consider if this can actually be brought into lines 91-93
-		std::vector<std::string> shuffler;
-
-		for (std::map<std::string, int>::iterator it = diseaseMap.begin(); it != diseaseMap.end(); it++) {
-			shuffler.push_back(it->first);
-		}
-
-		// initialize random number generator
-    	std::random_device rd;
-    	std::mt19937 g(rd());
-		std::shuffle(shuffler.begin(), shuffler.end(), g);
-
-		for (int i=0; i< shuffler.size(); i++) {
-			*outPutFile << shuffler[i] << std::endl;
-		}
-	}
-
-	// Close files
-	tsvFile.close();
-}
-
 std::vector<std::string> tokenize(std::string sentence) {
 	// First convert it entirely to lowercase
 	std::for_each(sentence.begin(), sentence.end(), [](char & c) {
@@ -152,25 +84,6 @@ std::vector<std::string> tokenize(std::string sentence) {
     return tokens;
 }
 
-std::vector<std::vector<int>> tokenizedCharIndexes(std::vector<std::string> tokens) {
-	// This is a 1D array but will be indexed using 2d indexing.
-	int cols, rows;
-	cols = 2;
-	rows = tokens.size();
-	std::vector<std::vector<int>> matrix;
-	matrix.resize(rows, std::vector<int>(cols, 0));
-
-	for (int x=0; x<tokens.size(); x++) {
-		if (x == 0) {
-			matrix[0][1] = tokens[x].length() - 1;
-		} else {
-			matrix[x][0] = matrix[x-1][1] + 2;
-			matrix[x][1] = matrix[x][0] + tokens[x].length() - 1;
-		}
-	}
-	return matrix;
-}
-
 void processFile(std::string file_name, std::string file_path, std::string out_path, Node* root) {
 	/*
 		This function will need to read the file in...
@@ -193,11 +106,16 @@ void processFile(std::string file_name, std::string file_path, std::string out_p
 
 				c. Loop again
 	*/
-
+	// Initialise needed variables
+	int lineCounter = 0;
+	nlohmann::json j;
+    std::string line;
+    std::vector<std::string> tokenizedLine;
 	std::fstream inFile;
 	std::fstream outFile;
 	std::string new_file_name, out_put_path;
 
+	// Create sub directory for the annotations
 	out_put_path = out_path + "/annotations/";
 	if (!std::filesystem::is_directory(out_put_path) || !std::filesystem::exists(out_put_path)) { // Check if src folder exists
     	std::filesystem::create_directory(out_put_path);
@@ -210,17 +128,8 @@ void processFile(std::string file_name, std::string file_path, std::string out_p
 			break;
 		new_file_name.push_back(file_name[i]);
 	}
-	outFile.open(out_path + "/annotations/" + new_file_name + ".json", std::ios::out);
+	outFile.open(out_put_path + new_file_name + ".json", std::ios::out);
 	inFile.open(file_path, std::ios::in);
-
-    // Initialise needed variables
-	int lineCounter = 0;
-    std::string line;
-    std::vector<std::string> tokenizedLine;
-	std::vector<std::vector<int>> tokensIndexed;
-	std::map<std::string, std::vector<std::vector<int>>> mappedIndexes;
-    std::map<std::string, std::vector<int>> annotationMap;
-	nlohmann::json j;
 
 	while (!inFile.eof()) {
         // Read in the file
@@ -228,13 +137,19 @@ void processFile(std::string file_name, std::string file_path, std::string out_p
 
         // Tokenize the line and strip punctuation
         tokenizedLine = tokenize(line);
-		tokensIndexed = tokenizedCharIndexes(tokenizedLine);
 
+		int startChar = 0;
+		int endChar = 0;
         // Loop through the tokenized line, search for each string in the TST
         for (int i=0; i<tokenizedLine.size(); i++) {
+
+			if (i != 0) {
+				startChar = endChar + 2;
+			}
+			endChar = startChar + tokenizedLine[i].length() - 1;
+
             if (searchTST(root, tokenizedLine[i])) {
-                annotationMap[tokenizedLine[i]].push_back(lineCounter);
-				j["annotations"]["tokens"][tokenizedLine[i]]["lines"][std::to_string(lineCounter+1)] = {tokensIndexed[i][0], tokensIndexed[i][1]};
+				j["annotations"]["tokens"][tokenizedLine[i]]["lines"][std::to_string(lineCounter+1)].push_back({startChar, endChar});
             }
         }
 
