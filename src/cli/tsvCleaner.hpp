@@ -132,8 +132,8 @@ void cleantsv(std::fstream *tsvFile, std::fstream *outPutFile, int targetColumn,
                 *outPutFile << shuffler[i] << std::endl;
             }
         } else {
-            for (int i=0; i< shuffler.size(); i++) {
-                *outPutFile << shuffler[i] << std::endl;
+            for (std::map<std::string, int>::iterator it = diseaseMap.begin(); it != diseaseMap.end(); it++) {
+                *outPutFile << it->first << std::endl;
             }
         }
 	}
