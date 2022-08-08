@@ -84,39 +84,6 @@ std::vector<std::string> tokenize(std::string sentence) {
     return tokens;
 }
 
-
-void writeAnnotationOut(std::string file_name, std::string out_path, std::map<std::string, std::vector<int>> annotations) {
-	// initialisations
-	std::fstream outFile;
-	nlohmann::json j;
-	std::string new_file_name, out_put_path;
-
-	out_put_path = out_path + "/annotations/";
-	if (!std::filesystem::is_directory(out_put_path) || !std::filesystem::exists(out_put_path)) { // Check if src folder exists
-    	std::filesystem::create_directory(out_put_path);
-	}
-
-	// add a number that is stored as double (note the implicit conversion of j to an object)
-    // replacing .(...) file extension with .json
-	for (int i=0; i < file_name.length()-1; i++) {
-		if (file_name[i] == '.')
-			break;
-		new_file_name.push_back(file_name[i]);
-	}
-	outFile.open(out_path + "/annotations/" + new_file_name + ".json", std::ios::out);
-
-	for (std::map<std::string, std::vector<int>>::iterator it = annotations.begin(); it != annotations.end(); it++) {
-		std::vector<int> lines;
-		for (int i=0; i<it->second.size(); i++) {
-			lines.push_back(it->second[i]);
-		}
-		j["Diseases"][it->first] = lines;
-	}
-	outFile << j.dump(4) << std::endl;
-	outFile.close();
-}
-
-
 void processFile(std::string file_name, std::string file_path, std::string out_path, Node* root) {
 	/*
 		This function will need to read the file in...
@@ -139,15 +106,30 @@ void processFile(std::string file_name, std::string file_path, std::string out_p
 
 				c. Loop again
 	*/
-
-	std::fstream inFile;
-	inFile.open(file_path);
-
-    // Initialise needed variables
+	// Initialise needed variables
 	int lineCounter = 0;
+	nlohmann::json j;
     std::string line;
     std::vector<std::string> tokenizedLine;
-    std::map<std::string, std::vector<int>> annotationMap;
+	std::fstream inFile;
+	std::fstream outFile;
+	std::string new_file_name, out_put_path;
+
+	// Create sub directory for the annotations
+	out_put_path = out_path + "/annotations/";
+	if (!std::filesystem::is_directory(out_put_path) || !std::filesystem::exists(out_put_path)) { // Check if src folder exists
+    	std::filesystem::create_directory(out_put_path);
+	}
+
+	// add a number that is stored as double (note the implicit conversion of j to an object)
+    // replacing .(...) file extension with .json
+	for (int i=0; i < file_name.length()-1; i++) {
+		if (file_name[i] == '.')
+			break;
+		new_file_name.push_back(file_name[i]);
+	}
+	outFile.open(out_put_path + new_file_name + ".json", std::ios::out);
+	inFile.open(file_path, std::ios::in);
 
 	while (!inFile.eof()) {
         // Read in the file
@@ -156,10 +138,18 @@ void processFile(std::string file_name, std::string file_path, std::string out_p
         // Tokenize the line and strip punctuation
         tokenizedLine = tokenize(line);
 
+		int startChar = 0;
+		int endChar = 0;
         // Loop through the tokenized line, search for each string in the TST
         for (int i=0; i<tokenizedLine.size(); i++) {
+
+			if (i != 0) {
+				startChar = endChar + 2;
+			}
+			endChar = startChar + tokenizedLine[i].length() - 1;
+
             if (searchTST(root, tokenizedLine[i])) {
-                annotationMap[tokenizedLine[i]].push_back(lineCounter);
+				j["annotations"]["tokens"][tokenizedLine[i]]["lines"][std::to_string(lineCounter+1)].push_back({startChar, endChar});
             }
         }
 
@@ -167,5 +157,6 @@ void processFile(std::string file_name, std::string file_path, std::string out_p
         lineCounter++;
 	}
 
-    writeAnnotationOut(file_name, out_path, annotationMap);
+	outFile << j.dump(4) << std::endl;
+	outFile.close();
 }

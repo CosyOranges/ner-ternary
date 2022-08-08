@@ -1,0 +1,28 @@
+name: Semantic Release
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+
+  release:
+    name: Release
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2.5.1
+
+    - name: NPM Install
+      run: |
+        npm i -g semantic-release@18
+        npm i --save-dev @semantic-release/git @semantic-release/changelog conventional-changelog-conventionalcommits -D
+    - name: Semantic Release
+      run: |
+        npx semantic-release@18
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
