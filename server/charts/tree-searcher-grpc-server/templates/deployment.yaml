@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "treesearcher-grpc-server.fullname" . }}
+  labels:
+    {{- include "treesearcher-grpc-server.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "treesearcher-grpc-server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "treesearcher-grpc-server.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "treesearcher-grpc-server.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.containers.grpc.securityContext | nindent 12 }}
+          image: "{{ .Values.containers.grpc.image.repository }}:{{ .Values.containers.grpc.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.containers.grpc.image.pullPolicy }}
+          ports:
+            - name: grpc
+              containerPort: {{ .Values.containers.grpc.port }}
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.containers.grpc.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.containers.grpc.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          {{- if .Values.containers.grpc.env}}
+          env:
+            {{- range $name, $item := .Values.containers.grpc.env }}
+            - name: {{ $name }}
+              {{- $item | toYaml | nindent 14 }}
+            {{- end }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.containers.grpc.resources | nindent 12 }}
+          volumeMounts:
+            - name: {{ .Values.pvc.volumeName | quote }}
+              mountPath: {{ .Values.pvc.mountPath | quote}}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: {{ .Values.pvc.volumeName | quote }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.pvc.name | quote }}
