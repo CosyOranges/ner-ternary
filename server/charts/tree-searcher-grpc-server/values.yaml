@@ -1,0 +1,107 @@
+# Default values for aems-grpc-server.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+
+securityContext: {}
+  # fsGroup: 2000
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+annotations: {}
+
+containers:
+  grpc:
+    image:
+      repository: 569907343002.dkr.ecr.eu-west-2.amazonaws.com/eng/bpe/tree-searcher/server
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+      pullPolicy: IfNotPresent
+    port: 50051
+    env:
+    - name: TREESEARCHER_GRPC_PORT
+      value: "50051"
+    - name: TREESEARCHER_MAX_WORKERS
+      value: "10"
+    - name: GRPC_DNS_RESOLVER
+      value: "native"
+    - name: APP_ENVIRONMENT
+      value: dev
+    - name: GITLAB_API_URL
+      value: https://gitlab.beno.ai/api/v4
+    - name: GITLAB_URL
+      value: https://gitlab.beno.ai
+    resources:
+      limits:
+        cpu: 2
+        memory: 16Gi
+      requests:
+        cpu: 1
+        memory: 16Gi
+    securityContext: {}
+      # capabilities:
+      #   drop:
+      #   - ALL
+      # readOnlyRootFilesystem: true
+      # runAsNonRoot: true
+      # runAsUser: 1000
+
+pvc:
+  name: treesearcher-pvc
+  namespace: ml-infra
+  accessMode: ReadWriteOnce
+  storageClassName: gp3-deferred
+  capacity: 16Gi
+  volumeName: data
+  mountPath: "/data"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+  hosts:
+    - host: treesearcher.ml.nr.dev.int.beno.ai
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+grpcui:
+  targetGRPCUrl: "treesearcher.ml.nr.dev.int.beno.ai:443"
+  ingress:
+    hosts:
+      - host: "grpcui-treesearcher.ml.nr.dev.int.beno.ai"
+        paths:
+          - path: /
+            pathType: ImplementationSpecific

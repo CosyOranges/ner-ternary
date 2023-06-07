@@ -1,0 +1,8 @@
+*
+.*
+
+!server/**
+!proto/**
+!client/**
+!CMakeLists.txt
+!data/**

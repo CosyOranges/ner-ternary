@@ -1,0 +1,8 @@
+apiVersion: v2
+name: tree-searcher-server
+description: GRPC Server for the Tree Searcher annotation service.
+type: application
+sources:
+  - https://gitlab.beno.ai/eng/bpe/tree-searcher
+version: 0.0.2
+appVersion: 1.0.0-dev.4

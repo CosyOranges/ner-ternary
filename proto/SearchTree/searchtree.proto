@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option java_package = "searchtree.grpc";
+
+package searchtree;
+
+service SearchTree {
+    rpc InsertToTree (InsertTreeRequest) returns (InsertTreeResponse) {};
+
+    rpc ReplaceTree (TempTreeRequest) returns (TempTreeResponse) {};
+
+    rpc Annotate (AnnotateRequest) returns (AnnotateResponse) {};
+
+    rpc AnnotateFile (stream AnnotateRequest) returns (AnnotateResponse) {};
+}
+
+message InsertTreeRequest {
+    string tree_terms = 1;
+}
+
+message InsertTreeResponse {
+    string ready = 1;
+}
+
+message TempTreeRequest {
+    string tree_terms = 1;
+}
+
+message TempTreeResponse {
+    string tree_id = 1;
+    bool success = 2;
+}
+
+message AnnotateRequest {
+    int32 test = 1;
+    string document = 2;
+}
+
+message AnnotateResponse {
+    string annotations = 1;
+}
